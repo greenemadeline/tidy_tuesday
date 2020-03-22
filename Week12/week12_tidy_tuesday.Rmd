@@ -1,0 +1,32 @@
+---
+title: "Tidy Tuesday Week 12"
+author: "Madeline Greene"
+date: "3/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(remotes)
+remotes::install_github("clauswilke/colorblindr")
+library(colorblindr)
+
+office_ratings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-17/office_ratings.csv')
+```
+
+
+```{r}
+office_ratings %>%
+  ggplot(aes(x = factor(season), y = imdb_rating, fill = factor(season))) +
+  geom_violin(width = 0.2) +
+  labs(x = "Season", y = "IMDb Rating") +
+  theme(legend.position = "none") -> office_plot
+
+cvd_grid(office_plot) -> cvd_office_plot
+
+cvd_office_plot
+```
+
+This week I really wanted to practice violin plots. I have only tried them once before and I felt that this data was perfect to pracice a violin plot because it would show the distribution of the ratings as well as the density of that data. The wider the area, the more dense/more of the same ratings would be. In addition, for one of my class assignments, we can use the colorblindr package, so I wanted to practice that as well!! I love how it makes a grid with different colorblind versions. 
