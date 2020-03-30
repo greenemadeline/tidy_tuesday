@@ -1,0 +1,35 @@
+---
+title: "Tidy Tuesday Week 13"
+author: "Madeline Greene"
+date: "3/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+tbi_age <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_age.csv')
+tbi_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_year.csv')
+tbi_military <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-24/tbi_military.csv')
+```
+
+## Week 13 
+
+
+```{r}
+tbi_military %>%
+  filter(service == "Marines") %>%
+  mutate(highlight = ifelse(severity=="Mild", "Mild", "Other")) %>%
+  ggplot(aes(x = year, y = diagnosed, group = severity, color = highlight, size = highlight)) +
+  geom_line() +
+  facet_wrap(~component) +
+  labs(x = "Year", y = "Diagnosed", highlight = "Severity") +
+  geom_label(x = 2010, y = 2000, label = "MILD brain injuries\n = HIGHEST", size = 3, color = "black") +
+  scale_color_brewer(palette = "Dark2") -> marine_tbi_figure
+
+marine_tbi_figure
+
+ggsave("tidytuesday_week13.png" ,marine_tbi_figure, height = 4, width = 6)
+```
+
+This week for TidyTuesday, I tried many new plotting techniques such as highlight. I showed how Mild was the only outlier in the data. I also tried adding a geom_label which wrote why mild injuries were the highest. My only difficulty was changing the legend title to "Severity" but it would not work. I am not sure why. I was really pleased to know that you can show the difference of one variable compared to all of the others without having too many lines and unnecessary colors. 
