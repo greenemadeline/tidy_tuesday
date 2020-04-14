@@ -1,0 +1,43 @@
+---
+title: "TidyTuesday Week 15"
+author: "Madeline Greene"
+date: "4/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(jpeg)
+library(grid)
+tdf_winners <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-07/tdf_winners.csv')
+```
+
+
+```{r}
+#read in PNG of background image
+jpeg::readJPEG("tour_france.jpg") -> tour_image
+
+tdf_winners %>%
+  #some years don't have data for time_overall
+  drop_na(time_overall) -> tdf_edit 
+
+
+ggplot(tdf_edit, aes(x = start_date, y = time_overall)) +
+  #how I added the background to the graph, placed this first before the data so wouldn't cover the data
+  annotation_custom(rasterGrob(tour_image,
+                               width = unit(1,"npc"), 
+                               height = unit(1,"npc")), 
+                    -Inf, Inf, -Inf, Inf) +
+  #made a thicker line so was able to see it properly
+  geom_line(col = "lightgoldenrod1", lwd= 2) +
+  #added title and subtitle to explain graph better
+  labs(title = "Tour de France Cyclist Overall Time",
+       subtitle = "Decreased overall times throughout the years of competition",
+       x = "Start date of the Tour",
+       y = "Overall Time to Complete Race (hours)")
+
+
+                              
+```
+
