@@ -39,7 +39,7 @@ ggplot(tdf_edit, aes(x = start_date, y = time_overall)) +
 
 
 
-
+ggsave("tidytuesday_week15.png", tour_final, height = 6, width = 10) 
                               
 ```
-This week's Tidy Tuesday really helped me practice a lot of things. Firstly, I learned a new skill which was uploading an image to have as the background of the figure. I did struggle with this but it helped me practice my terminal skills by changing where the image was being found. In addition, I practiced using titles and subtitles like we did in our previous homework assignment. I do want to add that I know my figure is deemed "bad". This is because of the y axis values. It DOES NOT start at 0. I wanted to make a big emphasis on the drop of values and this would not be as drastic if I changed the values.
+This week's Tidy Tuesday really helped me practice a lot of things. Firstly, I learned a new skill which was uploading an image to have as the background of the figure. I did struggle with this but it helped me practice my terminal skills by changing where the image was being found. In addition, I practiced using titles and subtitles like we did in our previous homework assignment. I do want to add that I know my figure is deemed "bad". This is because of the y axis values. It DOES NOT start at 0. I wanted to make a big emphasis on the drop of values and this would not be as drastic if I changed the values. This is me acknowledging that it is bad but useful for an emphasis like this.
