@@ -46,14 +46,14 @@ ggplot(rankingpoints, aes(x = id, y = points)) +
   coord_polar(start = 0) +
   geom_text(data = label_rank, aes(x = id, y = 80,
                                    label = title), color = "lavenderblush3", fontface = "bold",
-            size = 2.4, angle = label_rank$angle) +
+            size = 2.8, angle = label_rank$angle) +
   theme_minimal() +
   theme(axis.text = element_blank(),
       axis.title = element_blank(),
       panel.grid = element_blank(),
       panel.background = element_rect(fill = "lavenderblush4"))+
   annotate(geom = "text", x = 0, y = -30, label = "Kanye West", color = "white", size = 7) +
-  annotate(geom = "text", x = 0, y = -45, label = "Top 13 Songs", color = "white", size = 4) +
+  annotate(geom = "text", x = 0, y = -45, label = "Top 13 Songs (by points)", color = "white", size = 4) +
   annotate(geom = "text", x = 0, y = -55, label = "BBC Music", color = "white", size = 3) -> plot
 
 
