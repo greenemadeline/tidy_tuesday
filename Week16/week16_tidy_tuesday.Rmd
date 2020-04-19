@@ -35,7 +35,6 @@ rankings %>%
 label_rank <- rankingpoints
 number_of_bar <- nrow(label_rank)
 label_rank$angle_calc <- 90-360 *(label_rank$id) / number_of_bar
-label_rank$hjust <- ifelse(label_rank$angle_calc < (-90), 0, 1)
 label_rank$angle <- ifelse(label_rank$angle_calc < (-90), label_rank$angle_calc + 180, label_rank$angle_calc)
 label_rank$title <- paste(label_rank$title, " (", label_rank$points,")", sep="")
 
@@ -46,10 +45,10 @@ ggplot(rankingpoints, aes(x = id, y = points)) +
   ylim(-80, 80) +
   coord_polar(start = 0) +
   geom_text(data = label_rank, aes(x = id, y = 80,
-                                   label = title, hjust=hjust), color = "lavenderblush3", fontface = "bold",
-            size = 2.4, angle = label_rank$angle, inherit.aes = F) +
+                                   label = title), color = "lavenderblush3", fontface = "bold",
+            size = 2.4, angle = label_rank$angle) +
   theme_minimal() +
-theme(axis.text = element_blank(),
+  theme(axis.text = element_blank(),
       axis.title = element_blank(),
       panel.grid = element_blank(),
       panel.background = element_rect(fill = "lavenderblush4"))+
@@ -70,3 +69,10 @@ ggdraw() +
 ggsave("tidytuesday_week16.png", final_plot, width = 7, height = 7)
 
 ```
+
+
+This week for TidyTuesday, I practiced A LOT of new skills. I introduced myself to the package cowplot and magick. I did struggle at first but with trial and error, was able to upload a png with transparency to be part of my plot. I also spent a lot of time learning and figuring out how to adjust the labels with specific angles because of the circular barplot. This was a lot of trial and error and research but found that if I renamed the angles, I would not be hardcoding, which made the trial and error process much easier.  I am very happy on how it came out!!
+
+
+
+
