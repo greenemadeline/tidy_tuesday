@@ -1,0 +1,72 @@
+---
+title: "TidyTuesday Week 16"
+author: "Madeline Greene"
+date: "4/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(jpeg)
+library(grid)
+library(cowplot)
+library(magick)
+polls <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-14/polls.csv')
+rankings <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-14/rankings.csv')
+
+
+```
+
+
+```{r}
+img <- image_read("kanye_face.png") %>%
+  image_resize("300x300")  
+
+
+rankings %>%
+   mutate(title = factor(title), 
+         points=(as.numeric(points))) %>%
+  filter(artist %in% c("Kanye West", "Kanye West ft. Pusha T", "Kanye West ft. Rihanna & Kid Cudi", "JAY-Z & Kanye West", "Kanye West ft. Syleena Johnson", "Kanye West ft. Jamie Foxx", "Kanye West ft. Bon Iver")) %>%
+  select(title, artist, points ) %>%
+  arrange(points) %>%
+  mutate(id = seq(1,n())) ->rankingpoints
+ 
+label_rank <- rankingpoints
+number_of_bar <- nrow(label_rank)
+label_rank$angle_calc <- 90-360 *(label_rank$id) / number_of_bar
+label_rank$hjust <- ifelse(label_rank$angle_calc < (-90), 0, 1)
+label_rank$angle <- ifelse(label_rank$angle_calc < (-90), label_rank$angle_calc + 180, label_rank$angle_calc)
+label_rank$title <- paste(label_rank$title, " (", label_rank$points,")", sep="")
+
+
+
+ggplot(rankingpoints, aes(x = id, y = points)) +
+  geom_col(fill = "black") +
+  ylim(-80, 80) +
+  coord_polar(start = 0) +
+  geom_text(data = label_rank, aes(x = id, y = 80,
+                                   label = title, hjust=hjust), color = "lavenderblush3", fontface = "bold",
+            size = 2.4, angle = label_rank$angle, inherit.aes = F) +
+  theme_minimal() +
+theme(axis.text = element_blank(),
+      axis.title = element_blank(),
+      panel.grid = element_blank(),
+      panel.background = element_rect(fill = "lavenderblush4"))+
+  annotate(geom = "text", x = 0, y = -30, label = "Kanye West", color = "white", size = 7) +
+  annotate(geom = "text", x = 0, y = -45, label = "Top 13 Songs", color = "white", size = 4) +
+  annotate(geom = "text", x = 0, y = -55, label = "BBC Music", color = "white", size = 3) -> plot
+
+
+## have to order plot first, them add image on top of the plot
+ggdraw() +
+  draw_plot(plot) +
+  draw_image(img,
+             x = 0.405, 
+             y = 0.34,
+             width = 0.2, height = 0.2) -> final_plot
+
+
+ggsave("tidytuesday_week16.png", final_plot, width = 7, height = 7)
+
+```
