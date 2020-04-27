@@ -1,0 +1,62 @@
+---
+title: "TidyTuesday Week 17"
+author: "Madeline Greene"
+date: "4/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(tidyverse)
+library(jpeg)
+library(grid)
+library(cowplot)
+library(magick)
+gdpr_violations <- readr::read_tsv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-21/gdpr_violations.tsv')
+gdpr_text <- readr::read_tsv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-04-21/gdpr_text.tsv')
+```
+
+
+```{r }
+
+
+img <- image_read("gdpr_image.png") %>%
+  image_resize("300x300")  
+
+
+gdpr_violations %>%
+  filter(price > 0) %>%
+  mutate(name = fct_reorder(name, price, max)) %>%
+  ggplot(aes(y =name, x = price)) +
+  geom_point( color="blue", size=4, alpha=0.6) +
+  theme_light() +
+  theme(panel.grid.major.y = element_blank(),panel.border = element_blank(), axis.ticks.y = element_blank(),  axis.title.y = element_blank()) +
+   scale_x_continuous(labels = label_dollar(scale = 1 / 1e6 , 
+                                            prefix = "€",
+                                            suffix = " M")) +
+  labs(x = "Price of Violation (Euros)", 
+       title = "GPDR Violation Prices Across Countries", 
+       subtitle = "Spread of fines throughout the EU") +
+  geom_vline(xintercept = 1900000, col = "red") +
+  annotate("text", x = 9000000, y = "Iceland", size = 2, label = "the separation between average fines\n and fine prices that are SHOCKING")-> plot
+
+
+ggdraw() +
+  draw_plot(plot) +
+  draw_image(img,
+             x = 0.35, 
+             y = 0.22,
+             width = 0.5, height = 0.5) -> final_plot
+
+ggsave("tidytuesday_week17.png", final_plot, width = 7, height = 7)
+
+
+
+
+
+```
+This week for TidyTuesday, I practiced a lot of skills that I already had and tried to understand them more. One skill I did learn was about scale_x_continuous and being able to change the labels for the currency provided in the data. Originally when plotting, the data would be with exponents, and I did not want a super long number there either so this was a great new skill to learn. I also tried a different form of point and added a background image as well. Lastly, I added a vline to separate the outliers of the data from the overall data to see the top 9 fines from the gdpr. 
+
+
