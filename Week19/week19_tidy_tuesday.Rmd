@@ -1,0 +1,99 @@
+---
+title: "TidyTuesday Week 19"
+author: "Madeline Greene"
+date: "5/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(magick)
+villagers <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/villagers.csv')
+```
+
+
+```{r}
+#filter female villagers
+villagers %>% 
+  group_by(personality,gender) %>%
+  filter(gender == "female")%>%
+  summarise(count=n()) ->female_villagers
+#filter male villagers
+villagers %>% 
+  group_by(personality,gender) %>%
+  filter(gender == "male")%>%
+  summarise(count=n()) ->male_villagers
+
+
+# Compute percentages
+female_villagers$fraction <- female_villagers$count / sum(female_villagers$count)
+# Compute the cumulative percentages (top of each rectangle)
+female_villagers$ymax <- cumsum(female_villagers$fraction)
+# Compute the bottom of each rectangle
+female_villagers$ymin <- c(0, head(female_villagers$ymax, n=-1))
+# Compute label position
+female_villagers$labelPosition <- (female_villagers$ymax + female_villagers$ymin) / 2
+# Compute a good label
+female_villagers$label <- paste0(female_villagers$personality, "\n value: ", female_villagers$count)
+
+# Make the plot for female
+female_villagers %>%
+ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=personality)) +
+  geom_rect() +
+  geom_label( x=3.5, aes(y=labelPosition, label=label), size=5) +
+  scale_fill_brewer(palette="RdPu") +
+  coord_polar(theta="y") +
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.position = "none") -> p1
+
+
+
+# Compute percentages
+male_villagers$fraction <- male_villagers$count / sum(male_villagers$count)
+# Compute the cumulative percentages (top of each rectangle)
+male_villagers$ymax <- cumsum(male_villagers$fraction)
+# Compute the bottom of each rectangle
+male_villagers$ymin <- c(0, head(male_villagers$ymax, n=-1))
+# Compute label position
+male_villagers$labelPosition <- (male_villagers$ymax + male_villagers$ymin) / 2
+# Compute a good label
+male_villagers$label <- paste0(male_villagers$personality, "\n value: ", male_villagers$count)
+
+# Make the plot for male
+male_villagers %>%
+ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=personality)) +
+  geom_rect() +
+  geom_label( x=3.5, aes(y=labelPosition, label=label), size=5) +
+  scale_fill_brewer(palette="GnBu") +
+  coord_polar(theta="y") +
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.position = "none") -> p2
+
+
+#patchwork wouldn't work, so used ggarrange
+figure <- ggarrange(p1, p2, 
+                    labels = c("Female", "Male"))
+
+#read in transparant image, increased its image_resize for more clarity of image
+img1 <- image_read("animal_crossing_cartoon.png") %>%
+  image_resize("1000x1000")  
+
+#drew in image, played around with sizing
+ggdraw() +
+  draw_plot(figure) +
+  draw_image(img1,
+             x = 0.02, 
+             y = 0,
+             width = 1, height = 0.2) -> final_plot
+
+
+ggsave("tidytuesday_week19.png", final_plot, width = 7, height = 4.5)
+
+
+```
+I really enjoyed this tidytuesday because I love Animal Crossings. With this data, I used a new ggplot, geom_rect, as well as making the data into a "donut". I had a lot of fun playing around with this data and figuring out how to make it into a donut shape. I also practiced using ggarrange. I tried using patchwork to add the two plots together, however, the error kept saying that I couldn't add two ggplots together.
